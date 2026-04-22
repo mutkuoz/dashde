@@ -74,6 +74,26 @@ detect_distro() {
 DISTRO="$(detect_distro)"
 step "distro detected · $DISTRO"
 
+check_ags_collision() {
+  # Adventure Game Studio also ships an `ags` binary. Catch it before the
+  # user tries `ags run .` and gets "Unable to determine game data."
+  if command -v ags >/dev/null 2>&1; then
+    local ver
+    ver="$(ags --version 2>&1 | head -n1 || true)"
+    if echo "$ver" | grep -qi "adventure game studio"; then
+      warn "found Adventure Game Studio on PATH at $(command -v ags)"
+      warn "that's a different program — this project needs Aylur's GTK Shell v2."
+      warn "remove the game engine first:"
+      info "  sudo dnf remove ags        # fedora"
+      info "  sudo apt remove ags        # debian/ubuntu"
+      info "  sudo pacman -R ags         # arch (game-engine package, if installed)"
+      warn "then re-run this installer or follow the manual AGS v2 steps."
+      return 1
+    fi
+  fi
+  return 0
+}
+
 install_deps() {
   case "$DISTRO" in
     arch)
@@ -84,22 +104,34 @@ install_deps() {
       run "$PKG aylurs-gtk-shell dart-sass lm_sensors nmcli ttf-cormorant-garamond ttf-jetbrains-mono || true"
       ;;
     fedora)
-      run "sudo dnf install -y dart-sass lm_sensors NetworkManager jetbrains-mono-fonts || true"
-      warn "AGS v2 (aylurs-gtk-shell) must be built from source on Fedora — see https://aylur.github.io/ags/"
+      check_ags_collision || true
+      run "sudo dnf install -y dart-sass lm_sensors NetworkManager jetbrains-mono-fonts \
+        meson vala gjs gtk4-devel gtk4-layer-shell-devel libadwaita-devel \
+        libsoup3-devel json-glib-devel wayland-protocols-devel upower-devel \
+        gobject-introspection-devel || true"
+      warn "AGS v2 is not in Fedora repos — build from source (see README → 'Fedora install')"
+      warn "or use the one-liner:  nix run github:aylur/ags -- run $SCRIPT_DIR"
       ;;
     debian)
-      run "sudo apt-get install -y sass lm-sensors network-manager fonts-jetbrains-mono || true"
-      warn "AGS v2 (aylurs-gtk-shell) must be built from source on Debian — see https://aylur.github.io/ags/"
+      check_ags_collision || true
+      run "sudo apt-get install -y sass lm-sensors network-manager fonts-jetbrains-mono \
+        meson valac gjs libgtk-4-dev libgtk4-layer-shell-dev libadwaita-1-dev \
+        libsoup-3.0-dev libjson-glib-dev wayland-protocols libupower-glib-dev \
+        libgirepository1.0-dev || true"
+      warn "AGS v2 is not in Debian repos — build from source (see README → 'Debian install')"
+      warn "or use the one-liner:  nix run github:aylur/ags -- run $SCRIPT_DIR"
       ;;
     void)
       run "sudo xbps-install -y dart-sass lm_sensors NetworkManager font-jetbrains-mono || true"
-      warn "AGS v2 (aylurs-gtk-shell) not in void repos — build from source"
+      warn "AGS v2 not in void repos — build from source"
       ;;
     nixos)
-      info "NixOS: add ags, dart-sass, lm_sensors, networkmanager, fonts to your flake/config"
+      info "NixOS: run the dashboard directly via flake:"
+      info "  nix run github:aylur/ags -- run $SCRIPT_DIR"
       ;;
     *)
-      warn "unknown distro — install manually: ags, dart-sass, lm_sensors, networkmanager, JetBrains Mono"
+      warn "unknown distro — install manually: Aylur's GTK Shell v2 (NOT Adventure Game Studio),"
+      warn "                                    dart-sass, lm_sensors, networkmanager, JetBrains Mono"
       ;;
   esac
 }

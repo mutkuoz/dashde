@@ -49,10 +49,18 @@ re-renders in ~300ms. No restart.
 
 ## Install
 
+> [!WARNING]
+> **Naming collision.** The `ags` you get from Fedora/Debian repos is
+> **Adventure Game Studio** — a completely unrelated 2D game engine. This
+> project needs **Aylur's GTK Shell v2** (a.k.a. Astal). If `ags --version`
+> prints "Adventure Game Studio", remove that package first
+> (`sudo dnf remove ags` / `sudo apt remove ags`) before installing the
+> real AGS v2.
+
 ### tl;dr
 
 ```sh
-git clone https://github.com/yourname/dashde.git ~/code/dashde
+git clone https://github.com/mutkuoz/dashde.git ~/code/dashde
 cd ~/code/dashde
 ./install.sh
 ags run .
@@ -68,9 +76,49 @@ ags run .
 
 Flags: `--no-fonts`, `--no-hypr`, `--dry-run`. `./install.sh --help` prints the header.
 
+### Fedora install
+
+Fedora doesn't ship Aylur's GTK Shell v2. Two routes:
+
+**A — Nix (no build, no sudo after one-time nix setup):**
+
+```sh
+curl -L https://nixos.org/nix/install | sh -s -- --daemon
+# new shell, then from the repo:
+nix run github:aylur/ags -- run .
+```
+
+**B — build AGS v2 from source:**
+
+```sh
+# Remove the game-engine that squats on the `ags` name
+sudo dnf remove ags
+
+# Build deps
+sudo dnf install -y meson vala gjs dart-sass \
+  gtk4-devel gtk4-layer-shell-devel libadwaita-devel \
+  libsoup3-devel json-glib-devel wayland-protocols-devel \
+  upower-devel gobject-introspection-devel
+
+# Astal libraries (io + gtk4)
+git clone https://github.com/aylur/astal.git ~/src/astal
+cd ~/src/astal/lib/astal/io
+meson setup --prefix=/usr --buildtype=release build && sudo meson install -C build
+cd ../gtk4
+meson setup --prefix=/usr --buildtype=release build && sudo meson install -C build
+
+# AGS v2 CLI
+cd ~/src && git clone https://github.com/aylur/ags.git
+cd ags && sudo ./install.sh
+ags --version    # should print 2.x, not "Adventure Game Studio"
+```
+
+Debian/Ubuntu: same shape — substitute the `libgtk-4-dev` / `libgtk4-layer-shell-dev` / `libadwaita-1-dev` / `libsoup-3.0-dev` / `libjson-glib-dev` / `libupower-glib-dev` / `libgirepository1.0-dev` / `valac` / `gjs` / `meson` / `sass` packages.
+
 ### manual
 
-If you prefer not to run the script:
+If you prefer not to run the `install.sh` helper for the non-AGS
+dependencies:
 
 | dependency | what for |
 | --- | --- |
