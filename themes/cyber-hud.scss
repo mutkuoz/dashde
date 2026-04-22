@@ -1,0 +1,101 @@
+// cyber-hud — deep navy, cyan circuit, sharp geometry.
+//
+// Font stack:
+//   display : Rajdhani  — angular, modern, legible at 44px
+//   label   : Rajdhani  — all lowercase, tracked wide
+//   num     : JetBrains Mono — crisp tabular digits
+//
+// Borders are thin, corners tighter, and bar fills get a soft neon bloom.
+
+.dashboard {
+  --font-display: "Rajdhani", "Saira", "Exo 2", sans-serif;
+  --font-label: "Rajdhani", "Saira", sans-serif;
+  --font-body: "Rajdhani", "Saira", sans-serif;
+  --font-num: "JetBrains Mono", "Fira Code", "Inconsolata", monospace;
+
+  --bg: #0a1628;
+  --bg-overlay: radial-gradient(ellipse 70% 50% at 20% 0%, rgba(0, 217, 255, 0.06) 0%, rgba(10, 22, 40, 0) 75%);
+  --panel-bg: #0f1f34;
+  --panel-border: rgba(0, 217, 255, 0.22);
+  --panel-border-strong: rgba(0, 217, 255, 0.55);
+  --panel-radius: 2px;
+  --panel-shadow: 0 0 0 1px rgba(0, 217, 255, 0.04);
+  --panel-shadow-strong: 0 0 0 1px rgba(0, 217, 255, 0.20), 0 0 20px rgba(0, 217, 255, 0.10);
+
+  --ink-dark: #d6eeff;
+  --ink-medium: #6e8aa8;
+
+  --accent: #00d9ff;
+  --good: #3cffa4;
+  --warn: #ffb547;
+  --on-accent: #03121f;
+
+  --track: rgba(0, 217, 255, 0.10);
+  --divider: rgba(0, 217, 255, 0.12);
+  --hover-bg: rgba(0, 217, 255, 0.08);
+  --tile-bg: rgba(0, 217, 255, 0.03);
+  --tile-bg-hover: rgba(0, 217, 255, 0.10);
+  --mono-bg: rgba(0, 0, 0, 0.25);
+}
+
+@import "_base";
+
+// Cyber specifics
+.section {
+  letter-spacing: 2px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.label {
+  letter-spacing: 1px;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.muted {
+  font-style: normal;
+}
+
+.num,
+.num-display {
+  letter-spacing: 0;
+}
+
+.greeting {
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+// bar fills glow
+.bar__fill--primary {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.45);
+}
+
+.bar__fill--good {
+  background: var(--good);
+  box-shadow: 0 0 8px rgba(60, 255, 164, 0.35);
+}
+
+.bar__fill--warn {
+  background: var(--warn);
+  box-shadow: 0 0 8px rgba(255, 181, 71, 0.35);
+}
+
+// tiles slightly glow on hover
+button.tile:hover {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 18px rgba(0, 217, 255, 0.18);
+}
+
+.calendar__cell--today {
+  color: var(--on-accent);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+}
+
+.ornament__glyph {
+  font-size: 10px;
+  letter-spacing: 4px;
+}

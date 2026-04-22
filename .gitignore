@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
+.env.local
+
+# AGS
+@girs/
+.ags-cache/
+
+# user overrides
+config/local.yaml
+scratch/
+
+# generated screenshots
+docs/screenshots/*.local.png

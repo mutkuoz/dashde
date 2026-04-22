@@ -1,0 +1,38 @@
+{
+  "name": "dashde",
+  "version": "0.1.0",
+  "description": "A living, customizable desktop dashboard for Linux. Leather-bound journal by default; swap themes with one YAML line.",
+  "keywords": [
+    "ags",
+    "astal",
+    "dashboard",
+    "desktop",
+    "gtk4",
+    "hyprland",
+    "linux",
+    "wayland",
+    "widgets"
+  ],
+  "homepage": "https://github.com/yourname/dashde",
+  "repository": "https://github.com/yourname/dashde",
+  "bugs": "https://github.com/yourname/dashde/issues",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "ags run .",
+    "bundle": "ags bundle .",
+    "typecheck": "tsc --noEmit -p .",
+    "format": "prettier --write \"**/*.{ts,tsx,scss,yaml,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,scss,yaml,md}\""
+  },
+  "dependencies": {
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,121 @@
+# dashde — default configuration
+#
+# Drop this at ~/.config/dashboard/config.yaml and edit live.
+# The dashboard hot-reloads within ~300ms of any save.
+#
+# Themes: luxury-journal (default), cyber-hud, minimal-mono
+# Full widget reference: docs/widgets.md
+# How to add a widget type in one file: CONTRIBUTING.md
+
+theme: luxury-journal
+
+# Optional window tuning (omit for a fullscreen layer-shell background).
+# window:
+#   layer: background     # background | bottom | top | overlay
+#   anchor: [top, bottom, left, right]
+
+greeting:
+  name: Utku
+
+# Default column proportions per row, overridable by row index (as string keys).
+#   default: [1, 1]        → equal split for 2-cell rows
+#   "0": [3, 1]            → row index 0 uses 3:1 (ignored if cell count differs)
+layout_widths:
+  default: [1, 1]
+
+layout:
+  - [greeting, clock]
+  - [machine, connection]
+  - [tasks, notes]
+  - ["tmux:orchestrator", quick-launch]
+
+widgets:
+  greeting:
+    type: greeting
+    name: Utku
+
+  clock:
+    type: clock
+    format: "24h"
+    show_period: true
+    show_date: true
+
+  machine:
+    type: machine
+    show: [cpu, memory, gpu, disk, battery]
+
+  connection:
+    type: connection
+    show: [wifi, speed, ping, tailscale, public_ip]
+
+  tasks:
+    type: tasks
+    file: ~/notes/tasks.md
+    show_done: true
+
+  notes:
+    type: notes
+    file: ~/notes/scratch.md
+    line_count: 6
+
+  "tmux:orchestrator":
+    type: tmux
+    target: "research:0"
+    lines: 14
+    refresh_ms: 2000
+    parse_ansi: true
+    mono_font: "JetBrains Mono"
+    font_size: 12
+    on_click: "kitty tmux attach -t research"
+
+  quick-launch:
+    type: quick_launch
+    columns: 3
+    items:
+      - { icon: folder,   label: files, command: thunar }
+      - { icon: globe,    label: web,   command: firefox }
+      - { icon: terminal, label: term,  command: kitty }
+      - { icon: code,     label: code,  command: "code ~/code" }
+      - { icon: mail,     label: mail,  command: thunderbird }
+      - { icon: settings, label: prefs, command: "kitty -e $EDITOR ~/.config/dashboard/config.yaml" }
+
+# ─── additional examples, off by default ────────────────────────────
+# Uncomment and reference from `layout:` above to try them.
+#
+#   calendar:
+#     type: calendar
+#     week_starts_on: monday
+#
+#   pomodoro:
+#     type: pomodoro
+#     focus_min: 25
+#     break_min: 5
+#     rounds: 4
+#
+#   weather:
+#     type: weather
+#     lat: 41.0082
+#     lon: 28.9784
+#     days: 4
+#     units: metric
+#
+#   sensors:
+#     type: sensors
+#     show: [Tctl, Tccd1, fan1]
+#
+#   docker:
+#     type: shell_output
+#     title: "containers"
+#     command: "docker ps --format '{{.Names}}\t{{.Status}}'"
+#     refresh_ms: 5000
+#     lines: 8
+#
+#   logs:
+#     type: journalctl
+#     title: "journal · nginx"
+#     command: "journalctl -u nginx -n 20 --no-pager"
+#     refresh_ms: 10000
+#     lines: 20
+#
+#   media:
+#     type: media

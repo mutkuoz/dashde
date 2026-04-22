@@ -1,0 +1,75 @@
+// luxury-journal — fine leather, oxblood ink, parchment.
+//
+// Font stack:
+//   display : Parisienne (greeting only — one big flourish)
+//   label   : Caveat (handwritten body, lowercase)
+//   num     : Cormorant Garamond (classical serif numerals)
+//
+// Everything else is expressed through hairline burgundy, a barely-there
+// parchment gradient, and generous breathing room.
+
+.dashboard {
+  --font-display: "Parisienne", "Great Vibes", cursive;
+  --font-label: "Caveat", "Caveat Brush", "Homemade Apple", serif;
+  --font-body: "Caveat", serif;
+  --font-num: "Cormorant Garamond", "Cormorant", "EB Garamond", serif;
+
+  --bg: #ece0c8;
+  --bg-overlay: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255, 250, 235, 0.55) 0%, rgba(236, 224, 200, 0) 70%);
+  --panel-bg: #f2e8d3;
+  --panel-border: rgba(114, 37, 41, 0.15);
+  --panel-border-strong: rgba(114, 37, 41, 0.30);
+  --panel-radius: 4px;
+  --panel-shadow: 0 1px 2px rgba(61, 40, 23, 0.06);
+  --panel-shadow-strong: 0 4px 10px rgba(61, 40, 23, 0.10);
+
+  --ink-dark: #2d1810;
+  --ink-medium: #6b4e36;
+
+  --accent: #722529;        // burgundy
+  --good: #4a6b3a;          // sage green
+  --warn: #9e7b3a;          // gold
+  --on-accent: #f6ecd6;     // parchment on burgundy
+
+  --track: rgba(61, 40, 23, 0.12);
+  --divider: rgba(114, 37, 41, 0.10);
+  --hover-bg: rgba(114, 37, 41, 0.06);
+  --tile-bg: rgba(255, 248, 230, 0.35);
+  --tile-bg-hover: rgba(255, 248, 230, 0.65);
+  --mono-bg: rgba(255, 248, 230, 0.55);
+}
+
+@import "_base";
+
+// Theme-specific fine tuning: the parchment look rewards a touch of texture.
+// GTK CSS can layer gradients; keep them subtle so text stays sharp.
+
+.dashboard .panel {
+  // Faint "aged paper" wash — darker toward the bottom-right corner.
+  background: linear-gradient(135deg, rgba(255, 252, 240, 0.35) 0%, rgba(236, 224, 200, 0) 100%),
+    var(--panel-bg);
+}
+
+.greeting {
+  // Parisienne needs a touch more descender room
+  padding: 4px 0 8px;
+}
+
+// Bar fills get a hair of warmth
+.bar__fill--primary {
+  background: linear-gradient(90deg, #8b2b2f 0%, var(--accent) 100%);
+}
+
+.bar__fill--good {
+  background: linear-gradient(90deg, #5a7d4a 0%, var(--good) 100%);
+}
+
+.bar__fill--warn {
+  background: linear-gradient(90deg, #b88c44 0%, var(--warn) 100%);
+}
+
+// Ornament ◆ is small here — a grace note, not a statement.
+.ornament__glyph {
+  font-family: var(--font-num);
+  font-size: 13px;
+}
