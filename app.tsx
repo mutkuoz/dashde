@@ -1,5 +1,5 @@
 import { App, Astal, Gdk, Gtk } from "astal/gtk4";
-import { bind } from "astal";
+import { GLib, bind } from "astal";
 import { registerBuiltins } from "./widgets/index";
 import { config, initConfig, type DashboardConfig } from "./lib/config";
 import { applyTheme } from "./lib/theme";
@@ -8,6 +8,8 @@ import { logger } from "./lib/logger";
 import luxuryJournal from "./themes/luxury-journal.scss";
 
 const log = logger("app");
+
+const IS_WAYLAND = GLib.getenv("WAYLAND_DISPLAY") !== null;
 
 type LayerName = "background" | "bottom" | "top" | "overlay";
 type AnchorName = "top" | "bottom" | "left" | "right";
@@ -43,7 +45,16 @@ function layerFor(cfg: DashboardConfig): Astal.Layer {
   return LAYERS[name] ?? Astal.Layer.BACKGROUND;
 }
 
-function Dashboard(monitor: Gdk.Monitor): Gtk.Widget {
+/**
+ * On Wayland: a layer-shell surface anchored across the whole monitor,
+ * background layer, no keyboard focus, no exclusive zone. Sits behind
+ * everything else like a live wallpaper.
+ *
+ * On X11: a plain Gtk.Window sized 1280×800 so you can see the grid
+ * while iterating. Layer-shell has no X11 counterpart; this is the
+ * honest fallback.
+ */
+function WaylandDashboard(monitor: Gdk.Monitor): Gtk.Widget {
   return (
     <window
       cssClasses={["dashboard"]}
@@ -63,6 +74,23 @@ function Dashboard(monitor: Gdk.Monitor): Gtk.Widget {
   );
 }
 
+function X11Dashboard(): Gtk.Widget {
+  return (
+    <Gtk.Window
+      cssClasses={["dashboard"]}
+      application={App}
+      defaultWidth={1280}
+      defaultHeight={800}
+      title="DashDE"
+      visible
+    >
+      <box orientation={Gtk.Orientation.VERTICAL}>
+        {bind(config).as((cfg) => renderLayout(cfg))}
+      </box>
+    </Gtk.Window>
+  );
+}
+
 App.start({
   instanceName: "dashde",
   // Seed CSS with the luxury-journal theme so the first frame renders correctly;
@@ -75,12 +103,19 @@ App.start({
     applyTheme(config.get().theme);
     config.subscribe((cfg) => applyTheme(cfg.theme));
 
-    const monitors = App.get_monitors();
-    if (monitors.length === 0) {
-      log.warn("no monitors found — cannot render");
-      return;
+    if (IS_WAYLAND) {
+      const monitors = App.get_monitors();
+      if (monitors.length === 0) {
+        log.warn("no monitors found — cannot render");
+        return;
+      }
+      for (const m of monitors) WaylandDashboard(m);
+      log.info(
+        `dashde up on wayland · ${monitors.length} monitor${monitors.length === 1 ? "" : "s"}`,
+      );
+    } else {
+      log.info("dashde up on x11 · floating-window fallback (layer-shell is wayland-only)");
+      X11Dashboard();
     }
-    for (const m of monitors) Dashboard(m);
-    log.info(`dashde up · ${monitors.length} monitor${monitors.length === 1 ? "" : "s"}`);
   },
 });
