@@ -1,6 +1,6 @@
-import { Gtk } from "astal/gtk4";
-import { bind } from "astal";
-import { execAsync } from "astal/process";
+import { Gtk } from "ags/gtk4";
+import { bind } from "../lib/reactive";
+import { execAsync } from "ags/process";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
 import { Panel } from "../lib/panel";

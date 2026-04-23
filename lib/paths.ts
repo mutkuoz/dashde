@@ -1,4 +1,4 @@
-import { GLib } from "astal";
+import GLib from "gi://GLib?version=2.0";
 
 const HOME = GLib.get_home_dir();
 const XDG_CONFIG = GLib.getenv("XDG_CONFIG_HOME") || `${HOME}/.config`;

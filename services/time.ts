@@ -1,4 +1,4 @@
-import { Variable } from "astal";
+import { Variable } from "../lib/reactive";
 
 export const now = Variable<Date>(new Date()).poll(1000, () => new Date());
 

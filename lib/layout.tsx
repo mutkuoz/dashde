@@ -1,4 +1,4 @@
-import { Gtk } from "astal/gtk4";
+import { Gtk } from "ags/gtk4";
 import { widthsForRow, type DashboardConfig } from "./config";
 import { missingWidget, safeRender } from "./boundary";
 import { resolve } from "./registry";

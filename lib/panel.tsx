@@ -1,4 +1,4 @@
-import { Gtk } from "astal/gtk4";
+import { Gtk } from "ags/gtk4";
 
 interface PanelProps {
   title?: string;

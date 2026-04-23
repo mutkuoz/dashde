@@ -1,4 +1,4 @@
-import { App } from "astal/gtk4";
+import app from "ags/gtk4/app";
 import luxuryJournal from "../themes/luxury-journal.scss";
 import cyberHud from "../themes/cyber-hud.scss";
 import minimalMono from "../themes/minimal-mono.scss";
@@ -21,11 +21,11 @@ export function applyTheme(name: string): void {
     log.warn(`unknown theme "${name}" — available: ${Object.keys(themes).join(", ")}`);
     if (currentName) return; // stay on current
     // first boot fallback
-    App.apply_css(themes["luxury-journal"], true);
+    app.apply_css(themes["luxury-journal"], true);
     currentName = "luxury-journal";
     return;
   }
-  App.apply_css(css, true);
+  app.apply_css(css, true);
   currentName = name;
   log.info(`applied theme · ${name}`);
 }

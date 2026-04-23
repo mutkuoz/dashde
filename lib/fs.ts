@@ -1,5 +1,6 @@
-import { GLib, Gio } from "astal";
-import { readFile, writeFile } from "astal/file";
+import GLib from "gi://GLib?version=2.0";
+import Gio from "gi://Gio?version=2.0";
+import { readFile, writeFile } from "ags/file";
 import { expand } from "./paths";
 import { logger } from "./logger";
 

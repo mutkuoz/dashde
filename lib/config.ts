@@ -1,5 +1,5 @@
-import { Variable } from "astal";
-import { monitorFile, readFile } from "astal/file";
+import { Variable } from "./reactive";
+import { monitorFile, readFile } from "ags/file";
 import { parse as parseYaml } from "yaml";
 import { logger } from "./logger";
 import { paths, ensureDir } from "./paths";

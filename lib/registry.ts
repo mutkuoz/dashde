@@ -1,4 +1,4 @@
-import type { Gtk } from "astal/gtk4";
+import type { Gtk } from "ags/gtk4";
 import type { WidgetConfig } from "./config";
 
 export interface WidgetModule {

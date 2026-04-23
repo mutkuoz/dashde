@@ -1,5 +1,5 @@
-import { Gtk } from "astal/gtk4";
-import { bind } from "astal";
+import { Gtk } from "ags/gtk4";
+import { bind } from "../lib/reactive";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
 import { now, adaptiveGreeting, periodPhrase } from "../services/time";

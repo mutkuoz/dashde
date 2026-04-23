@@ -1,5 +1,5 @@
-import { Variable } from "astal";
-import { execAsync } from "astal/process";
+import { Variable } from "../lib/reactive";
+import { execAsync } from "ags/process";
 
 export interface ShellSnapshot {
   available: boolean;

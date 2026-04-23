@@ -1,4 +1,4 @@
-import { Gtk } from "astal/gtk4";
+import { Gtk } from "ags/gtk4";
 import { logger } from "./logger";
 
 const log = logger("widget");

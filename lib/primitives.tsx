@@ -1,5 +1,5 @@
-import { Gtk } from "astal/gtk4";
-import type { Binding } from "astal";
+import { Gtk } from "ags/gtk4";
+import type { Binding } from "./reactive";
 
 export interface BarProps {
   value: Binding<number> | number; // 0..1

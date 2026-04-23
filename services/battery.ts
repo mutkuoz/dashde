@@ -1,4 +1,4 @@
-import { Variable } from "astal";
+import { Variable } from "../lib/reactive";
 import { readText, exists } from "../lib/fs";
 import { warnOnce } from "../lib/logger";
 

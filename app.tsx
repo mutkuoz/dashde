@@ -1,5 +1,7 @@
-import { App, Astal, Gdk, Gtk } from "astal/gtk4";
-import { GLib, bind } from "astal";
+import { Astal, Gdk, Gtk } from "ags/gtk4";
+import app from "ags/gtk4/app";
+import GLib from "gi://GLib?version=2.0";
+import { bind } from "./lib/reactive";
 import { registerBuiltins } from "./widgets/index";
 import { config, initConfig, type DashboardConfig } from "./lib/config";
 import { applyTheme } from "./lib/theme";
@@ -58,7 +60,7 @@ function WaylandDashboard(monitor: Gdk.Monitor): Gtk.Widget {
   return (
     <window
       cssClasses={["dashboard"]}
-      application={App}
+      application={app}
       gdkmonitor={monitor}
       layer={bind(config).as(layerFor)}
       anchor={bind(config).as(anchorFlags)}
@@ -78,7 +80,7 @@ function X11Dashboard(): Gtk.Widget {
   return (
     <Gtk.Window
       cssClasses={["dashboard"]}
-      application={App}
+      application={app}
       defaultWidth={1280}
       defaultHeight={800}
       title="DashDE"
@@ -91,7 +93,7 @@ function X11Dashboard(): Gtk.Widget {
   );
 }
 
-App.start({
+app.start({
   instanceName: "dashde",
   // Seed CSS with the luxury-journal theme so the first frame renders correctly;
   // applyTheme() below swaps to whatever the user's config requests.
@@ -104,7 +106,7 @@ App.start({
     config.subscribe((cfg) => applyTheme(cfg.theme));
 
     if (IS_WAYLAND) {
-      const monitors = App.get_monitors();
+      const monitors = app.get_monitors();
       if (monitors.length === 0) {
         log.warn("no monitors found — cannot render");
         return;
