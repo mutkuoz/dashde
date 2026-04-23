@@ -2,11 +2,12 @@
 // Every theme @imports this after defining its CSS custom properties
 // on `.dashboard`.
 //
-// Typography tokens are declared here too: themes override
-// --font-display, --font-body, --font-num.
-//
-// GTK4 CSS caveats: no flexbox/grid (use boxes/grids in TSX), no ::before,
-// use min-width/min-height instead of width/height.
+// GTK4 CSS caveats:
+//   - no flexbox / no grid (composition lives in TSX)
+//   - no ::before / ::after on most widgets
+//   - percentage widths are REJECTED with "Percentages are not allowed
+//     here" — use min-width in px, or use Gtk.LevelBar for fractions
+//   - text-decoration support is partial; prefer color/underline contrast
 
 // ─── reset & root ───────────────────────────────────────────────────
 
@@ -14,8 +15,8 @@
   background: var(--bg);
   color: var(--ink-dark);
   font-family: var(--font-body);
-  font-size: 15px;
-  padding: 28px 26px;
+  font-size: 16px;
+  padding: 28px 44px;
 }
 
 // Optional subtle "paper" gradient behind the grid — creates depth without
@@ -27,11 +28,7 @@
 // ─── layout ─────────────────────────────────────────────────────────
 
 .rows {
-  // grid gap is declared in TSX (row_spacing, column_spacing of Gtk.Grid)
-}
-
-.row {
-  // Gtk.Grid row; cells are attached with their span
+  // gaps declared in TSX (row_spacing / column_spacing on Gtk.Grid)
 }
 
 .spacer {
@@ -44,8 +41,11 @@
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: var(--panel-radius, 4px);
-  padding: 14px 16px 16px;
-  transition: box-shadow 160ms ease, border-color 160ms ease;
+  padding: 18px 22px 20px;
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
   box-shadow: var(--panel-shadow, 0 1px 2px rgba(0, 0, 0, 0.04));
 }
 
@@ -54,13 +54,12 @@
 }
 
 button.panel {
-  // Buttons lose their native chrome when given the panel class
   background: var(--panel-bg);
 }
 
 button.panel:hover {
   background: var(--panel-bg);
-  box-shadow: var(--panel-shadow-strong, 0 2px 6px rgba(0, 0, 0, 0.07));
+  box-shadow: var(--panel-shadow-strong, 0 3px 10px rgba(0, 0, 0, 0.08));
 }
 
 .panel__body {
@@ -72,7 +71,7 @@ button.panel:hover {
 }
 
 .panel__head {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .section-wrap {
@@ -83,104 +82,121 @@ button.panel:hover {
 
 .greeting {
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: 80px;
   font-weight: 400;
   color: var(--accent);
   margin: 0;
   padding: 0;
-  // Parisienne has ample ascenders; tighten the line
   line-height: 1.0;
+  letter-spacing: 0.5px;
 }
 
 .section {
-  font-family: var(--font-label);
-  font-size: 19px;
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: 30px;
+  font-weight: 500;
   color: var(--accent);
   padding: 0;
   margin: 0;
+  letter-spacing: 0.3px;
 }
 
 .section__rule {
   background: var(--accent);
-  min-width: 26px;
+  min-width: 42px;
   min-height: 1px;
-  margin-top: 3px;
-  margin-bottom: 6px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  opacity: 0.55;
 }
 
 .label {
-  font-family: var(--font-label);
-  font-size: 15px;
+  font-family: var(--font-body);
+  font-size: 19px;
   color: var(--ink-medium);
-  font-weight: 400;
+  font-weight: 500;
+  font-feature-settings: "liga" 1, "kern" 1;
 }
 
 .num {
   font-family: var(--font-num);
-  font-size: 17px;
+  font-size: 20px;
   color: var(--ink-dark);
   font-weight: 500;
-  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-feature-settings: "tnum" 1, "lnum" 1, "kern" 1;
 }
 
 .num-display {
   font-family: var(--font-num);
-  font-size: 44px;
+  font-size: 76px;
   color: var(--ink-dark);
   font-weight: 500;
   font-feature-settings: "tnum" 1, "lnum" 1;
-  letter-spacing: -0.5px;
+  letter-spacing: -1.5px;
   line-height: 1.0;
 }
 
 .muted {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--ink-medium);
   font-style: italic;
 }
 
-// ─── bar ────────────────────────────────────────────────────────────
+// ─── bar (Gtk.LevelBar backed) ──────────────────────────────────────
 
 .bar {
-  padding: 4px 0;
+  padding: 6px 0 4px;
 }
 
 .bar__labels {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.bar__track {
+levelbar.bar__fill {
+  padding: 0;
+  min-height: 6px;
+}
+
+levelbar.bar__fill trough {
   background: var(--track);
+  border: none;
   border-radius: 999px;
-  min-height: 4px;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+  min-height: 6px;
+  padding: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
-.bar__fill {
-  background: var(--accent);
+levelbar.bar__fill block {
+  min-height: 6px;
   border-radius: 999px;
-  min-height: 4px;
-  transition: min-width 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: none;
+  box-shadow: none;
 }
 
-.bar__fill--primary {
+levelbar.bar__fill block.filled,
+levelbar.bar__fill block.full {
   background: var(--accent);
 }
 
-.bar__fill--good {
+levelbar.bar__fill block.empty {
+  background: transparent;
+}
+
+levelbar.bar__fill--good block.filled,
+levelbar.bar__fill--good block.full {
   background: var(--good);
 }
 
-.bar__fill--warn {
+levelbar.bar__fill--warn block.filled,
+levelbar.bar__fill--warn block.full {
   background: var(--warn);
 }
 
 // ─── stat row ───────────────────────────────────────────────────────
 
 .stat-row {
-  padding: 4px 0;
+  padding: 7px 0;
   border-bottom: 1px solid transparent;
 }
 
@@ -197,14 +213,15 @@ button.panel:hover {
 
 .task-list {
   background: transparent;
+  padding: 2px 0;
 }
 
 button.task {
   background: transparent;
   border: none;
-  padding: 6px 4px;
-  border-radius: 3px;
-  transition: background 120ms ease;
+  padding: 8px 6px;
+  border-radius: 4px;
+  transition: background 140ms ease;
 }
 
 button.task:hover {
@@ -213,20 +230,23 @@ button.task:hover {
 
 .task__mark {
   font-family: var(--font-num);
-  font-size: 15px;
+  font-size: 20px;
+  font-weight: 600;
   color: var(--accent);
-  min-width: 16px;
+  min-width: 22px;
 }
 
 .task__text {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 19px;
   color: var(--ink-dark);
+  font-feature-settings: "liga" 1, "kern" 1;
 }
 
 button.task--done .task__text {
   color: var(--ink-medium);
-  // GTK4 doesn't support text-decoration universally; rely on color fade + muted glyph
+  font-style: italic;
+  opacity: 0.7;
 }
 
 button.task--done .task__mark {
@@ -237,21 +257,27 @@ button.task--done .task__mark {
 
 .notes {
   background: transparent;
+  padding: 2px 0;
 }
 
 .notes__text {
   background: transparent;
   color: var(--ink-dark);
   font-family: var(--font-body);
-  font-size: 15px;
-  padding: 2px 0;
+  font-size: 19px;
+  padding: 6px 0;
   caret-color: var(--accent);
+  font-feature-settings: "liga" 1, "kern" 1;
 }
 
 .notes__text text {
-  // GTK TextView's inner text node
   background: transparent;
   color: var(--ink-dark);
+}
+
+.notes__text text selection {
+  background: var(--accent);
+  color: var(--on-accent, #fff);
 }
 
 // ─── quick launch tiles ─────────────────────────────────────────────
@@ -263,54 +289,64 @@ button.task--done .task__mark {
 button.tile {
   background: var(--tile-bg, transparent);
   border: 1px solid var(--panel-border);
-  border-radius: 6px;
-  padding: 14px 6px 12px;
-  transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  border-radius: 8px;
+  padding: 18px 10px 16px;
+  min-height: 88px;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 button.tile:hover {
   background: var(--tile-bg-hover, var(--hover-bg));
   border-color: var(--panel-border-strong, var(--accent));
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
 }
 
 button.tile:active {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .tile__inner {
   padding: 2px;
 }
 
-.tile__glyph {
-  font-size: 28px;
+.tile__icon {
   color: var(--accent);
-  margin-bottom: 4px;
+  -gtk-icon-size: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin-bottom: 10px;
+  -gtk-icon-style: symbolic;
 }
 
 .tile__img {
   -gtk-icon-filter: none;
+  margin-bottom: 10px;
 }
 
 .tile__label {
-  font-family: var(--font-label);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 17px;
   color: var(--ink-medium);
+  letter-spacing: 0.2px;
+  font-weight: 500;
 }
 
 // ─── tmux + shell_output ────────────────────────────────────────────
 
 .panel--tmux,
 .panel--shell {
-  padding-bottom: 12px;
+  padding-bottom: 18px;
 }
 
 .tmux__scroll,
 .shell__scroll {
   background: var(--mono-bg, transparent);
-  border-radius: 3px;
-  padding: 6px 8px;
-  min-height: 140px;
+  border-radius: 4px;
+  padding: 10px 12px;
+  min-height: 160px;
 }
 
 .tmux__text,
@@ -322,12 +358,12 @@ button.tile:active {
 // ─── weather ────────────────────────────────────────────────────────
 
 .panel--weather .weather__now {
-  padding: 2px 0 6px;
+  padding: 4px 0 10px;
 }
 
 .weather__glyph {
-  font-family: var(--font-display);
-  font-size: 46px;
+  font-family: var(--font-heading);
+  font-size: 54px;
   color: var(--accent);
 }
 
@@ -337,42 +373,49 @@ button.tile:active {
 }
 
 .weather__forecast {
-  padding-top: 6px;
+  padding-top: 10px;
   border-top: 1px solid var(--panel-border);
 }
 
 .weather__day {
-  padding: 2px 0;
+  padding: 4px 0;
 }
 
 // ─── calendar ───────────────────────────────────────────────────────
 
 .calendar {
-  padding: 2px 0;
+  padding: 4px 0;
 }
 
 .calendar__month {
-  font-family: var(--font-label);
-  font-size: 17px;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 500;
   color: var(--accent);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.calendar__head {
+  margin-bottom: 4px;
 }
 
 .calendar__weekday {
-  font-family: var(--font-label);
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 14px;
   color: var(--ink-medium);
-  min-width: 22px;
-  padding: 2px 0;
+  min-width: 26px;
+  padding: 3px 0;
+  letter-spacing: 0.3px;
 }
 
 .calendar__cell {
   font-family: var(--font-num);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--ink-dark);
-  min-width: 22px;
-  padding: 3px 0;
-  border-radius: 3px;
+  min-width: 26px;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 .calendar__cell--today {
@@ -388,23 +431,40 @@ button.tile:active {
 // ─── pomodoro ───────────────────────────────────────────────────────
 
 .pomodoro {
-  padding: 2px 0;
+  padding: 4px 0;
 }
 
+// ─── buttons ────────────────────────────────────────────────────────
+
 button.btn {
-  font-family: var(--font-label);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
   color: var(--ink-dark);
   background: transparent;
   border: 1px solid var(--panel-border);
   border-radius: 4px;
-  padding: 6px 14px;
-  transition: background 120ms ease, border-color 120ms ease;
+  padding: 8px 18px;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease;
+  letter-spacing: 0.3px;
 }
 
 button.btn:hover {
   background: var(--hover-bg);
   border-color: var(--panel-border-strong, var(--accent));
+}
+
+button.btn--icon {
+  padding: 8px 10px;
+  min-width: 38px;
+  min-height: 34px;
+}
+
+button.btn--icon image {
+  color: var(--ink-dark);
+  -gtk-icon-size: 18px;
 }
 
 button.btn--primary {
@@ -413,37 +473,46 @@ button.btn--primary {
   border-color: var(--accent);
 }
 
+button.btn--primary image {
+  color: var(--on-accent, #fff);
+}
+
 button.btn--primary:hover {
   background: var(--accent);
-  // Darken via inner shadow — GTK CSS lacks filter on arbitrary widgets
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.08);
 }
 
 // ─── media ──────────────────────────────────────────────────────────
 
 .media__title {
-  font-family: var(--font-label);
-  font-size: 17px;
+  font-family: var(--font-heading);
+  font-size: 20px;
   color: var(--ink-dark);
   font-weight: 500;
+}
+
+.media__controls {
+  margin-top: 6px;
 }
 
 // ─── ornament ───────────────────────────────────────────────────────
 
 .ornament {
-  padding: 22px 0;
+  padding: 26px 0;
 }
 
 .ornament__rule {
   background: var(--accent);
   min-height: 1px;
   min-width: 20px;
+  opacity: 0.5;
 }
 
 .ornament__glyph {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--accent);
-  padding: 0 12px;
+  padding: 0 14px;
+  opacity: 0.8;
 }
 
 // ─── empty / error ──────────────────────────────────────────────────
@@ -466,14 +535,15 @@ button.btn--primary:hover {
 scrollbar {
   background: transparent;
   border: none;
-  min-width: 4px;
+  min-width: 6px;
 }
 
 scrollbar slider {
   background: var(--panel-border-strong, var(--panel-border));
   border-radius: 4px;
-  min-width: 4px;
-  min-height: 30px;
+  min-width: 5px;
+  min-height: 40px;
+  transition: background 120ms ease;
 }
 
 scrollbar slider:hover {

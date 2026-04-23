@@ -1,4 +1,5 @@
 import { Gtk } from "ags/gtk4";
+import { With } from "ags";
 import { Variable, bind } from "../lib/reactive";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
@@ -103,38 +104,42 @@ export const tasks: WidgetModule = {
 
     return (
       <Panel title={cfg.title ?? "today's tasks"} titleSuffix={suffix} scrollable>
-        <box
-          orientation={Gtk.Orientation.VERTICAL}
-          cssClasses={["task-list"]}
-          spacing={2}
-        >
-          {bind(state).as((s) => {
+        <With value={state}>
+          {(s) => {
             const items = showDone ? s.tasks : s.tasks.filter((t) => !t.done);
             if (s.raw === "") {
-              return [
-                (
+              return (
+                <box cssClasses={["task-list"]} orientation={Gtk.Orientation.VERTICAL}>
                   <label
                     cssClasses={["muted"]}
                     halign={Gtk.Align.START}
                     label={`no file at ${cfg.file ?? "~/notes/tasks.md"}`}
                   />
-                ) as Gtk.Widget,
-              ];
+                </box>
+              );
             }
             if (items.length === 0) {
-              return [
-                (
+              return (
+                <box cssClasses={["task-list"]} orientation={Gtk.Orientation.VERTICAL}>
                   <label
                     cssClasses={["muted"]}
                     halign={Gtk.Align.START}
                     label="nothing yet — add lines like `- [ ] task` to the file"
                   />
-                ) as Gtk.Widget,
-              ];
+                </box>
+              );
             }
-            return items.map((t) => row(t) as Gtk.Widget);
-          })}
-        </box>
+            return (
+              <box
+                orientation={Gtk.Orientation.VERTICAL}
+                cssClasses={["task-list"]}
+                spacing={2}
+              >
+                {items.map((t) => row(t) as Gtk.Widget)}
+              </box>
+            );
+          }}
+        </With>
       </Panel>
     );
   },

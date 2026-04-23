@@ -70,7 +70,12 @@ function WaylandDashboard(monitor: Gdk.Monitor): Gtk.Widget {
       namespace="dashde"
       visible
     >
-      <box orientation={Gtk.Orientation.VERTICAL}>
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        valign={Gtk.Align.START}
+        hexpand
+        vexpand
+      >
         <With value={config}>{(cfg) => renderLayout(cfg)}</With>
       </box>
     </window>
@@ -82,12 +87,17 @@ function X11Dashboard(): Gtk.Widget {
     <Gtk.Window
       cssClasses={["dashboard"]}
       application={app}
-      defaultWidth={1280}
-      defaultHeight={800}
+      defaultWidth={1600}
+      defaultHeight={1000}
       title="DashDE"
       visible
     >
-      <box orientation={Gtk.Orientation.VERTICAL}>
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        valign={Gtk.Align.START}
+        hexpand
+        vexpand
+      >
         <With value={config}>{(cfg) => renderLayout(cfg)}</With>
       </box>
     </Gtk.Window>

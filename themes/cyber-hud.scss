@@ -9,9 +9,10 @@
 
 .dashboard {
   --font-display: "Rajdhani", "Saira", "Exo 2", sans-serif;
-  --font-label: "Rajdhani", "Saira", sans-serif;
+  --font-heading: "Rajdhani", "Saira", sans-serif;
   --font-body: "Rajdhani", "Saira", sans-serif;
   --font-num: "JetBrains Mono", "Fira Code", "Inconsolata", monospace;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   --bg: #0a1628;
   --bg-overlay: radial-gradient(ellipse 70% 50% at 20% 0%, rgba(0, 217, 255, 0.06) 0%, rgba(10, 22, 40, 0) 75%);
@@ -70,19 +71,29 @@
 }
 
 // bar fills glow
-.bar__fill--primary {
+levelbar.bar__fill block.filled,
+levelbar.bar__fill block.full {
   background: var(--accent);
   box-shadow: 0 0 8px rgba(0, 217, 255, 0.45);
 }
 
-.bar__fill--good {
+levelbar.bar__fill--good block.filled,
+levelbar.bar__fill--good block.full {
   background: var(--good);
   box-shadow: 0 0 8px rgba(60, 255, 164, 0.35);
 }
 
-.bar__fill--warn {
+levelbar.bar__fill--warn block.filled,
+levelbar.bar__fill--warn block.full {
   background: var(--warn);
   box-shadow: 0 0 8px rgba(255, 181, 71, 0.35);
+}
+
+levelbar.bar__fill trough {
+  border-radius: 2px;
+}
+levelbar.bar__fill block {
+  border-radius: 2px;
 }
 
 // tiles slightly glow on hover

@@ -1,4 +1,5 @@
 import { Gtk } from "ags/gtk4";
+import { With } from "ags";
 import { bind } from "../lib/reactive";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
@@ -66,26 +67,34 @@ export const weather: WidgetModule = {
     );
 
     const forecast = (
-      <box orientation={Gtk.Orientation.HORIZONTAL} cssClasses={["weather__forecast"]} spacing={14}>
-        {bind(stream).as((w) => {
-          const rest = w.days.slice(1); // skip today (shown above)
-          return rest.map((d) => (
-            <box
-              cssClasses={["weather__day"]}
-              orientation={Gtk.Orientation.VERTICAL}
-              halign={Gtk.Align.CENTER}
-              hexpand
-            >
-              <label cssClasses={["label"]} label={weekdayShort(d.date)} />
-              <label cssClasses={["weather__glyph-small"]} label={weatherSymbol(d.code)} />
-              <label
-                cssClasses={["num"]}
-                label={`${Math.round(d.tMax)} / ${Math.round(d.tMin)}`}
-              />
-            </box>
-          )) as Gtk.Widget[];
-        })}
-      </box>
+      <With value={stream}>
+        {(w) => (
+          <box
+            orientation={Gtk.Orientation.HORIZONTAL}
+            cssClasses={["weather__forecast"]}
+            spacing={14}
+          >
+            {w.days.slice(1).map(
+              (d) =>
+                (
+                  <box
+                    cssClasses={["weather__day"]}
+                    orientation={Gtk.Orientation.VERTICAL}
+                    halign={Gtk.Align.CENTER}
+                    hexpand
+                  >
+                    <label cssClasses={["label"]} label={weekdayShort(d.date)} />
+                    <label cssClasses={["weather__glyph-small"]} label={weatherSymbol(d.code)} />
+                    <label
+                      cssClasses={["num"]}
+                      label={`${Math.round(d.tMax)} / ${Math.round(d.tMin)}`}
+                    />
+                  </box>
+                ) as Gtk.Widget,
+            )}
+          </box>
+        )}
+      </With>
     );
 
     return (

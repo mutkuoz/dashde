@@ -11,9 +11,10 @@
 
 .dashboard {
   --font-display: "Darker Grotesque", "Public Sans", "DM Sans", sans-serif;
-  --font-label: "Darker Grotesque", "Public Sans", sans-serif;
+  --font-heading: "Darker Grotesque", "Public Sans", sans-serif;
   --font-body: "Darker Grotesque", "Public Sans", sans-serif;
   --font-num: "JetBrains Mono", "IBM Plex Mono", "Fira Code", monospace;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", monospace;
 
   --bg: #fafafa;
   --bg-overlay: transparent;
@@ -86,18 +87,19 @@
   font-weight: 400;
 }
 
-.bar__track {
+levelbar.bar__fill trough,
+levelbar.bar__fill block {
   border-radius: 0;
 }
 
-.bar__fill {
-  border-radius: 0;
-}
-
-.bar__fill--primary,
-.bar__fill--good,
-.bar__fill--warn {
+levelbar.bar__fill block.filled,
+levelbar.bar__fill block.full,
+levelbar.bar__fill--good block.filled,
+levelbar.bar__fill--good block.full,
+levelbar.bar__fill--warn block.filled,
+levelbar.bar__fill--warn block.full {
   background: var(--accent);
+  box-shadow: none;
 }
 
 button.tile {

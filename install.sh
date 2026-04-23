@@ -166,8 +166,8 @@ if [[ $DO_FONTS -eq 1 ]]; then
   # luxury-journal trio
   fetch_font "Parisienne"           parisienne        "Parisienne-Regular.ttf"
   fetch_font "Caveat"               caveat            "Caveat%5Bwght%5D.ttf"
-  fetch_font "Cormorant Garamond"   cormorantgaramond "CormorantGaramond-Regular.ttf"
-  fetch_font "Cormorant Garamond"   cormorantgaramond "CormorantGaramond-Medium.ttf"
+  fetch_font "EB Garamond"          ebgaramond        "EBGaramond%5Bwght%5D.ttf"
+  fetch_font "EB Garamond Italic"   ebgaramond        "EBGaramond-Italic%5Bwght%5D.ttf"
   # cyber-hud
   fetch_font "Rajdhani"             rajdhani          "Rajdhani-Regular.ttf"
   fetch_font "Rajdhani"             rajdhani          "Rajdhani-Medium.ttf"

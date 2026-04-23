@@ -24,17 +24,30 @@ export const mediaWidget: WidgetModule = {
               m.available ? [m.artist, m.album].filter(Boolean).join(" · ") : "",
             )}
           />
-          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={6} halign={Gtk.Align.START}>
-            <button cssClasses={["btn"]} onClicked={() => playerctl("previous")}>
-              <label label="⏮" />
+          <box
+            orientation={Gtk.Orientation.HORIZONTAL}
+            spacing={6}
+            halign={Gtk.Align.START}
+            cssClasses={["media__controls"]}
+          >
+            <button cssClasses={["btn", "btn--icon"]} onClicked={() => playerctl("previous")}>
+              <image iconName="media-skip-backward-symbolic" pixelSize={18} />
             </button>
-            <button cssClasses={["btn", "btn--primary"]} onClicked={() => playerctl("play-pause")}>
-              <label
-                label={bind(media).as((m) => (m.status === "Playing" ? "⏸" : "⏵"))}
+            <button
+              cssClasses={["btn", "btn--icon", "btn--primary"]}
+              onClicked={() => playerctl("play-pause")}
+            >
+              <image
+                iconName={bind(media).as((m) =>
+                  m.status === "Playing"
+                    ? "media-playback-pause-symbolic"
+                    : "media-playback-start-symbolic",
+                )}
+                pixelSize={18}
               />
             </button>
-            <button cssClasses={["btn"]} onClicked={() => playerctl("next")}>
-              <label label="⏭" />
+            <button cssClasses={["btn", "btn--icon"]} onClicked={() => playerctl("next")}>
+              <image iconName="media-skip-forward-symbolic" pixelSize={18} />
             </button>
           </box>
         </box>

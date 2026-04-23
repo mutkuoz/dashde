@@ -1,25 +1,24 @@
 import { Gtk } from "ags/gtk4";
 import type { Binding } from "./reactive";
 
+type Tone = "primary" | "good" | "warn";
+
 export interface BarProps {
   value: Binding<number> | number; // 0..1
-  tone?: Binding<"primary" | "good" | "warn"> | "primary" | "good" | "warn";
+  tone?: Binding<Tone> | Tone;
   label?: Binding<string> | string;
   right?: Binding<string> | string;
 }
 
 /**
- * A horizontal progress bar with an optional label/right-text row above.
- * Plain GTK primitives only — no DrawingArea — so theme swaps just work.
+ * A horizontal bar backed by Gtk.LevelBar. We use LevelBar because GTK4
+ * CSS rejects `min-width: X%` on plain boxes (which is how the old
+ * implementation drew the fill), so percentage-based fills silently
+ * failed with a "Percentages are not allowed here" parser error.
  */
 export function Bar(props: BarProps): Gtk.Widget {
-  const toneClass = toStyle(props.tone ?? "primary", (t) => `bar__fill bar__fill--${t}`);
-  const width = toStyle(props.value, (v) => `min-width: ${Math.max(0, Math.min(1, v)) * 100}%;`);
-
-  const fillClasses: Binding<string[]> | string[] =
-    typeof (toneClass as Binding<string>)?.as === "function"
-      ? (toneClass as Binding<string>).as((s) => s.split(" "))
-      : (toneClass as string).split(" ");
+  const valueAcc = toStyle(props.value, (v) => Math.max(0, Math.min(1, v)));
+  const toneClasses = toStyle(props.tone ?? "primary", (t) => ["bar__fill", `bar__fill--${t}`]);
 
   return (
     <box cssClasses={["bar"]} orientation={Gtk.Orientation.VERTICAL}>
@@ -33,9 +32,14 @@ export function Bar(props: BarProps): Gtk.Widget {
           )}
         </box>
       )}
-      <box cssClasses={["bar__track"]} hexpand>
-        <box cssClasses={fillClasses} css={width} />
-      </box>
+      <Gtk.LevelBar
+        cssClasses={toneClasses as Binding<string[]> | string[]}
+        mode={Gtk.LevelBarMode.CONTINUOUS}
+        minValue={0}
+        maxValue={1}
+        value={valueAcc as Binding<number> | number}
+        hexpand
+      />
     </box>
   );
 }
