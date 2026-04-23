@@ -253,6 +253,60 @@ button.task--done .task__mark {
   color: var(--good);
 }
 
+// ─── inputs ─────────────────────────────────────────────────────────
+// Gtk.Entry's default chrome is dark and clashes with the journal theme.
+// Override both the entry itself and its inner `text` node (GTK4's Entry
+// is composed of `entry > text`, and the text node carries the bg).
+
+entry.task-input,
+entry.settings__entry {
+  background: var(--tile-bg-hover, rgba(255, 248, 230, 0.55));
+  border: 1px solid var(--panel-border);
+  border-radius: 5px;
+  padding: 8px 12px;
+  color: var(--ink-dark);
+  font-family: var(--font-body);
+  font-size: 17px;
+  caret-color: var(--accent);
+  min-height: 22px;
+  box-shadow: none;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+entry.task-input text,
+entry.settings__entry text {
+  background: transparent;
+  color: var(--ink-dark);
+  caret-color: var(--accent);
+}
+
+entry.task-input:focus-within,
+entry.settings__entry:focus-within {
+  border-color: var(--accent);
+  background: #fdf7e8;
+  outline: none;
+}
+
+entry.task-input > placeholder,
+entry.settings__entry > placeholder,
+entry.task-input text > placeholder,
+entry.settings__entry text > placeholder {
+  color: var(--ink-medium);
+  opacity: 0.55;
+  font-style: italic;
+}
+
+// Selection highlight inside entries
+entry.task-input selection,
+entry.settings__entry selection,
+entry.task-input text selection,
+entry.settings__entry text selection {
+  background: var(--accent);
+  color: var(--on-accent, #fff);
+}
+
 // ─── notes ──────────────────────────────────────────────────────────
 
 .notes {
@@ -312,18 +366,26 @@ button.tile:active {
   padding: 2px;
 }
 
-.tile__icon {
+image.tile__icon {
   color: var(--accent);
-  -gtk-icon-size: 32px;
   min-width: 32px;
   min-height: 32px;
   margin-bottom: 10px;
-  -gtk-icon-style: symbolic;
 }
 
 .tile__img {
   -gtk-icon-filter: none;
   margin-bottom: 10px;
+}
+
+image.btn__icon {
+  color: var(--ink-dark);
+  min-width: 18px;
+  min-height: 18px;
+}
+
+button.btn--primary image.btn__icon {
+  color: var(--on-accent, #fff);
 }
 
 .tile__label {
@@ -465,6 +527,8 @@ button.btn--icon {
 button.btn--icon image {
   color: var(--ink-dark);
   -gtk-icon-size: 18px;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 button.btn--primary {
@@ -480,6 +544,138 @@ button.btn--primary image {
 button.btn--primary:hover {
   background: var(--accent);
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.08);
+}
+
+// ─── settings widget (inline) ───────────────────────────────────────
+
+.settings {
+  padding: 2px 0;
+}
+
+.settings__themes button.btn {
+  padding: 9px 6px;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.settings__themes button.btn label {
+  font-size: 14px;
+}
+
+// ─── settings window ────────────────────────────────────────────────
+
+.settings-window {
+  background: var(--bg);
+}
+
+.settings-window__body {
+  padding: 40px 56px 48px;
+}
+
+.settings-window__title {
+  font-size: 64px;
+  line-height: 1;
+  padding: 0 0 4px;
+}
+
+.settings-window__scroll {
+  background: transparent;
+}
+
+.settings__widget-list {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.settings__widget-row {
+  padding: 8px 10px;
+  border-radius: 4px;
+  transition: background 120ms ease;
+}
+
+.settings__widget-row:hover {
+  background: var(--hover-bg);
+}
+
+.settings__add-row {
+  margin-top: 4px;
+}
+
+.settings__dropdown {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 5px;
+  min-height: 38px;
+  min-width: 180px;
+  padding: 0 8px;
+  color: var(--ink-dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.settings__dropdown:hover {
+  border-color: var(--panel-border-strong, var(--accent));
+  background: var(--hover-bg);
+}
+
+.settings__dropdown > button {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  color: var(--ink-dark);
+  box-shadow: none;
+}
+
+.settings__dropdown popover {
+  background: var(--panel-bg);
+  color: var(--ink-dark);
+  border: 1px solid var(--panel-border);
+  font-family: var(--font-body);
+}
+
+.settings__dropdown popover contents {
+  background: var(--panel-bg);
+  padding: 4px;
+}
+
+.settings__dropdown popover contents row,
+.settings__dropdown popover contents listview row {
+  padding: 8px 10px;
+  border-radius: 4px;
+  color: var(--ink-dark);
+}
+
+.settings__dropdown popover contents row:hover,
+.settings__dropdown popover contents listview row:hover {
+  background: var(--hover-bg);
+}
+
+.settings__layout-scroll {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.settings__layout-editor {
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 4px;
+  caret-color: var(--accent);
+}
+
+.settings__layout-editor text {
+  background: transparent;
+  color: var(--ink-dark);
+  font-family: var(--font-mono);
+}
+
+.settings__footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-border);
 }
 
 // ─── media ──────────────────────────────────────────────────────────

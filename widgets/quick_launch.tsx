@@ -4,6 +4,8 @@ import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
 import { Panel } from "../lib/panel";
 import { logger } from "../lib/logger";
+import { iconPath, hasIcon } from "../lib/icons";
+import { openSettingsWindow } from "../lib/settings-window";
 
 const log = logger("quick_launch");
 
@@ -19,53 +21,33 @@ interface QuickLaunchConfig extends WidgetConfig {
   title?: string;
 }
 
-/**
- * Shorthand → freedesktop symbolic icon-name map.
- *
- * Symbolic icons ship with the Adwaita icon theme (available on every GTK
- * install) and render as monochrome masks tintable via CSS `color`, so they
- * pick up the current theme's accent automatically. Users can also pass a
- * full icon name (e.g. "applications-development-symbolic") or an absolute
- * path/URI to an SVG or PNG.
- */
-const ICONS: Record<string, string> = {
-  folder: "folder-symbolic",
-  globe: "web-browser-symbolic",
-  web: "web-browser-symbolic",
-  terminal: "utilities-terminal-symbolic",
-  code: "applications-development-symbolic",
-  editor: "text-editor-symbolic",
-  mail: "mail-unread-symbolic",
-  settings: "preferences-system-symbolic",
-  prefs: "preferences-system-symbolic",
-  music: "audio-x-generic-symbolic",
-  camera: "camera-photo-symbolic",
-  search: "system-search-symbolic",
-  file: "text-x-generic-symbolic",
-  calendar: "x-office-calendar-symbolic",
-  heart: "emblem-favorite-symbolic",
-  star: "starred-symbolic",
-  bookmark: "user-bookmarks-symbolic",
-  book: "accessories-dictionary-symbolic",
-  image: "image-x-generic-symbolic",
-  link: "insert-link-symbolic",
-  power: "system-shutdown-symbolic",
-  lock: "system-lock-screen-symbolic",
-  moon: "weather-clear-night-symbolic",
-  sun: "weather-clear-symbolic",
-  cloud: "weather-overcast-symbolic",
-  download: "folder-download-symbolic",
-  video: "video-x-generic-symbolic",
-  chat: "user-available-symbolic",
-  home: "user-home-symbolic",
-};
-
+/** Build an icon widget from either a bundled alias, a system icon-name,
+ *  or an absolute file/URI path. */
 function renderIcon(icon: string): Gtk.Widget {
   if (icon.startsWith("/") || icon.includes("://")) {
-    return <image file={icon} pixelSize={32} cssClasses={["tile__img"]} /> as Gtk.Widget;
+    return <image file={icon} pixelSize={32} cssClasses={["tile__icon"]} /> as Gtk.Widget;
   }
-  const iconName = ICONS[icon] ?? icon; // allow users to pass any icon-name directly
-  return <image iconName={iconName} pixelSize={32} cssClasses={["tile__icon"]} /> as Gtk.Widget;
+  if (hasIcon(icon)) {
+    return (
+      <image file={iconPath(icon)} pixelSize={32} cssClasses={["tile__icon"]} />
+    ) as Gtk.Widget;
+  }
+  // Fallback: treat as an icon-theme name
+  return (
+    <image iconName={icon} pixelSize={32} cssClasses={["tile__icon"]} />
+  ) as Gtk.Widget;
+}
+
+/** Runs a command, with a small set of internal `dashde:…` protocol handlers
+ *  for things like opening the settings window. */
+function runCommand(command: string): void {
+  if (command === "dashde:open-settings" || command === "dashde:settings") {
+    openSettingsWindow();
+    return;
+  }
+  execAsync(["bash", "-lc", command]).catch((err) =>
+    log.error(`launch "${command}" failed: ${(err as Error).message}`),
+  );
 }
 
 export const quick_launch: WidgetModule = {
@@ -79,9 +61,9 @@ export const quick_launch: WidgetModule = {
       <Gtk.Grid
         cssClasses={["tiles"]}
         columnHomogeneous
-        rowHomogeneous={false}
-        columnSpacing={12}
-        rowSpacing={12}
+        rowHomogeneous
+        columnSpacing={10}
+        rowSpacing={10}
       />
     ) as Gtk.Grid;
 
@@ -90,13 +72,15 @@ export const quick_launch: WidgetModule = {
         <button
           cssClasses={["tile"]}
           tooltipText={item.command}
-          onClicked={() => {
-            execAsync(["bash", "-c", item.command]).catch((err) =>
-              log.error(`launch "${item.command}" failed: ${(err as Error).message}`),
-            );
-          }}
+          onClicked={() => runCommand(item.command)}
         >
-          <box orientation={Gtk.Orientation.VERTICAL} cssClasses={["tile__inner"]} spacing={4}>
+          <box
+            orientation={Gtk.Orientation.VERTICAL}
+            cssClasses={["tile__inner"]}
+            spacing={6}
+            halign={Gtk.Align.CENTER}
+            valign={Gtk.Align.CENTER}
+          >
             {renderIcon(item.icon)}
             <label cssClasses={["tile__label"]} label={item.label} />
           </box>
@@ -118,7 +102,9 @@ export const quick_launch: WidgetModule = {
 
     return (
       <Panel title={cfg.title ?? "quick launch"}>
-        <box cssClasses={["tiles-wrap"]}>{grid}</box>
+        <box cssClasses={["tiles-wrap"]} vexpand>
+          {grid}
+        </box>
       </Panel>
     );
   },

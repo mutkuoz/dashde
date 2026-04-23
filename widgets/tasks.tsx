@@ -11,6 +11,8 @@ interface TasksConfig extends WidgetConfig {
   file?: string;
   show_done?: boolean;
   title?: string;
+  /** Show the "add a task…" input row. Default true. */
+  editable?: boolean;
 }
 
 interface Task {
@@ -43,12 +45,19 @@ function toggle(content: string, taskIndex: number): string {
   return lines.join("\n");
 }
 
+function appendTask(content: string, text: string): string {
+  const trimmed = content.replace(/\s+$/, "");
+  const sep = trimmed.length === 0 ? "" : "\n";
+  return `${trimmed}${sep}- [ ] ${text}\n`;
+}
+
 export const tasks: WidgetModule = {
   displayName: "Tasks",
   render(cfgIn) {
     const cfg = cfgIn as TasksConfig;
     const path = expand(cfg.file ?? "~/notes/tasks.md");
     const showDone = cfg.show_done ?? true;
+    const editable = cfg.editable !== false;
 
     const state = Variable<{ tasks: Task[]; raw: string }>({ tasks: [], raw: "" });
 
@@ -76,7 +85,7 @@ export const tasks: WidgetModule = {
       if (t.done) boxClasses.push("task--done");
       return (
         <button cssClasses={boxClasses} onClicked={() => onToggle(t.index)}>
-          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={10}>
+          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={12}>
             <label cssClasses={["task__mark"]} label={t.done ? "✓" : "○"} />
             <label
               cssClasses={["task__text"]}
@@ -95,6 +104,7 @@ export const tasks: WidgetModule = {
       <label
         cssClasses={["num"]}
         halign={Gtk.Align.END}
+        valign={Gtk.Align.START}
         label={bind(state).as((s) => {
           const open = s.tasks.filter((t) => !t.done).length;
           return `${open} open · ${s.tasks.length} total`;
@@ -102,12 +112,17 @@ export const tasks: WidgetModule = {
       />
     );
 
-    return (
-      <Panel title={cfg.title ?? "today's tasks"} titleSuffix={suffix} scrollable>
+    const listArea = (
+      <Gtk.ScrolledWindow
+        cssClasses={["panel__scroll"]}
+        hscrollbarPolicy={Gtk.PolicyType.NEVER}
+        vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
+        vexpand
+      >
         <With value={state}>
           {(s) => {
             const items = showDone ? s.tasks : s.tasks.filter((t) => !t.done);
-            if (s.raw === "") {
+            if (s.raw === "" && !editable) {
               return (
                 <box cssClasses={["task-list"]} orientation={Gtk.Orientation.VERTICAL}>
                   <label
@@ -124,7 +139,11 @@ export const tasks: WidgetModule = {
                   <label
                     cssClasses={["muted"]}
                     halign={Gtk.Align.START}
-                    label="nothing yet — add lines like `- [ ] task` to the file"
+                    label={
+                      editable
+                        ? "no tasks yet — type one below"
+                        : "nothing yet — add `- [ ] task` to the file"
+                    }
                   />
                 </box>
               );
@@ -140,6 +159,34 @@ export const tasks: WidgetModule = {
             );
           }}
         </With>
+      </Gtk.ScrolledWindow>
+    ) as Gtk.Widget;
+
+    const entry = (
+      <Gtk.Entry
+        cssClasses={["task-input"]}
+        placeholderText="add a task…"
+        hexpand
+      />
+    ) as Gtk.Entry;
+
+    entry.connect("activate", () => {
+      const text = entry.get_text().trim();
+      if (!text) return;
+      const cur = readText(path) ?? "";
+      const next = appendTask(cur, text);
+      if (writeText(path, next)) {
+        entry.set_text("");
+        load();
+      }
+    });
+
+    return (
+      <Panel title={cfg.title ?? "today's tasks"} titleSuffix={suffix}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={10} vexpand>
+          {listArea}
+          {editable && (entry as Gtk.Widget)}
+        </box>
       </Panel>
     );
   },

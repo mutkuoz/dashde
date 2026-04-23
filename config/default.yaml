@@ -17,18 +17,21 @@ theme: luxury-journal
 greeting:
   name: Utku
 
-# Default column proportions per row, overridable by row index (as string keys).
+# ─── layout ─────────────────────────────────────────────────────────
+# Column proportions per row, overridable by row index (as string keys).
 #   default: [1, 1]        → equal split for 2-cell rows
 #   "0": [3, 1]            → row index 0 uses 3:1 (ignored if cell count differs)
 layout_widths:
-  default: [1, 1]
+  "0": [3, 1]           # greeting dominates, clock narrow
+  "1": [3, 2]           # tasks main, notes secondary — both full height
+  "2": [1, 1, 1]        # machine · connection · quick-launch
 
 layout:
   - [greeting, clock]
-  - [machine, connection]
   - [tasks, notes]
-  - ["tmux:orchestrator", quick-launch]
+  - [machine, connection, quick-launch]
 
+# ─── widgets ────────────────────────────────────────────────────────
 widgets:
   greeting:
     type: greeting
@@ -40,47 +43,49 @@ widgets:
     show_period: true
     show_date: true
 
-  machine:
-    type: machine
-    show: [cpu, memory, gpu, disk, battery]
-
-  connection:
-    type: connection
-    show: [wifi, speed, ping, tailscale, public_ip]
-
   tasks:
     type: tasks
     file: ~/notes/tasks.md
     show_done: true
+    editable: true         # shows an "add a task…" input at bottom
 
   notes:
     type: notes
     file: ~/notes/scratch.md
-    line_count: 6
 
-  "tmux:orchestrator":
-    type: tmux
-    target: "research:0"
-    lines: 14
-    refresh_ms: 2000
-    parse_ansi: true
-    mono_font: "JetBrains Mono"
-    font_size: 12
-    on_click: "kitty tmux attach -t research"
+  machine:
+    type: machine
+    compact: true          # one-line rows instead of bars — denser
+    show: [cpu, memory, disk, battery]
+
+  connection:
+    type: connection
+    show: [wifi, speed, ping, public_ip]
 
   quick-launch:
     type: quick_launch
     columns: 3
     items:
-      - { icon: folder,   label: files, command: thunar }
-      - { icon: globe,    label: web,   command: firefox }
-      - { icon: terminal, label: term,  command: kitty }
-      - { icon: code,     label: code,  command: "code ~/code" }
-      - { icon: mail,     label: mail,  command: thunderbird }
-      - { icon: settings, label: prefs, command: "kitty -e $EDITOR ~/.config/dashboard/config.yaml" }
+      - { icon: folder,   label: files,  command: "xdg-open $HOME" }
+      - { icon: web,      label: web,    command: "xdg-open https://duckduckgo.com" }
+      - { icon: terminal, label: term,   command: "kitty || gnome-terminal || xterm" }
+      - { icon: code,     label: code,   command: "code ~/code || xdg-open ~/code" }
+      - { icon: mail,     label: mail,   command: thunderbird }
+      - { icon: gear,     label: prefs,  command: "dashde:open-settings" }
 
 # ─── additional examples, off by default ────────────────────────────
 # Uncomment and reference from `layout:` above to try them.
+#
+#   inline-settings:
+#     type: settings        # small in-layout theme switcher (window version
+#                           # available via the prefs tile above)
+#
+#   "tmux:orchestrator":
+#     type: tmux
+#     target: "research:0"
+#     lines: 14
+#     refresh_ms: 2000
+#     on_click: "kitty tmux attach -t research"
 #
 #   calendar:
 #     type: calendar

@@ -27,6 +27,7 @@ import { sensorsWidget } from "./sensors";
 import { calendarWidget } from "./calendar";
 import { pomodoroWidget } from "./pomodoro";
 import { mediaWidget } from "./media";
+import { settingsWidget } from "./settings";
 
 /** Register built-ins. Adding a new widget type = add file, add one line here. */
 export function registerBuiltins(): void {
@@ -59,4 +60,5 @@ export function registerBuiltins(): void {
   register("calendar", calendarWidget);
   register("pomodoro", pomodoroWidget);
   register("media", mediaWidget);
+  register("settings", settingsWidget);
 }

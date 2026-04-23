@@ -8,6 +8,7 @@ import { config, initConfig, type DashboardConfig } from "./lib/config";
 import { applyTheme } from "./lib/theme";
 import { renderLayout } from "./lib/layout";
 import { logger } from "./lib/logger";
+import { openSettingsWindow } from "./lib/settings-window";
 import luxuryJournal from "./themes/luxury-journal.scss";
 
 const log = logger("app");
@@ -129,6 +130,11 @@ app.start({
     } else {
       log.info("dashde up on x11 · floating-window fallback (layer-shell is wayland-only)");
       X11Dashboard();
+    }
+
+    // Debug hook: DASHDE_AUTO_SETTINGS=1 opens the settings window on launch.
+    if (GLib.getenv("DASHDE_AUTO_SETTINGS") !== null) {
+      setTimeout(() => openSettingsWindow(), 800);
     }
   },
 });
