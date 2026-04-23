@@ -1,5 +1,5 @@
 import { Gtk } from "ags/gtk4";
-import { bind } from "../lib/reactive";
+import { With } from "ags";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
 import { Panel } from "../lib/panel";
@@ -19,32 +19,37 @@ export const sensorsWidget: WidgetModule = {
     const filters = cfg.show ?? [];
     return (
       <Panel title={cfg.title ?? "sensors"}>
-        <box orientation={Gtk.Orientation.VERTICAL} cssClasses={["stats"]}>
-          {bind(sensors).as((list) => {
-            const matched = filters.length === 0
-              ? list
-              : list.filter((r) => filters.some((f) => `${r.chip}/${r.label}`.includes(f)));
-            if (matched.length === 0)
-              return [
-                (
-                  <label
-                    cssClasses={["muted"]}
-                    halign={Gtk.Align.START}
-                    label="no readings available"
-                  />
-                ) as Gtk.Widget,
-              ];
-            return matched.map(
-              (r) =>
-                (
-                  <StatRow
-                    label={r.label}
-                    value={`${r.value.toFixed(r.unit === "°C" ? 1 : 0)} ${r.unit}`}
-                  />
-                ) as Gtk.Widget,
+        <With value={sensors}>
+          {(list) => {
+            const matched =
+              filters.length === 0
+                ? list
+                : list.filter((r) => filters.some((f) => `${r.chip}/${r.label}`.includes(f)));
+            return (
+              <box orientation={Gtk.Orientation.VERTICAL} cssClasses={["stats"]}>
+                {matched.length === 0 ? (
+                  (
+                    <label
+                      cssClasses={["muted"]}
+                      halign={Gtk.Align.START}
+                      label="no readings available"
+                    />
+                  ) as Gtk.Widget
+                ) : (
+                  matched.map(
+                    (r) =>
+                      (
+                        <StatRow
+                          label={r.label}
+                          value={`${r.value.toFixed(r.unit === "°C" ? 1 : 0)} ${r.unit}`}
+                        />
+                      ) as Gtk.Widget,
+                  )
+                )}
+              </box>
             );
-          })}
-        </box>
+          }}
+        </With>
       </Panel>
     );
   },

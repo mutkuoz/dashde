@@ -1,4 +1,5 @@
 import { Gtk } from "ags/gtk4";
+import { With } from "ags";
 import { bind } from "../lib/reactive";
 import type { WidgetConfig } from "../lib/config";
 import type { WidgetModule } from "../lib/registry";
@@ -63,29 +64,35 @@ export const calendarWidget: WidgetModule = {
               ) as Gtk.Widget,
           )}
         </box>
-        {bind(now).as((d) => {
-          const grid = monthGrid(d, starts);
-          const today = d.getDate();
-          return grid.map(
-            (week) =>
-              (
-                <box orientation={Gtk.Orientation.HORIZONTAL} homogeneous>
-                  {week.map((day) => {
-                    const classes = ["calendar__cell"];
-                    if (day === today) classes.push("calendar__cell--today");
-                    if (day === null) classes.push("calendar__cell--blank");
-                    return (
-                      <label
-                        cssClasses={classes}
-                        label={day === null ? "" : String(day)}
-                        halign={Gtk.Align.CENTER}
-                      />
-                    ) as Gtk.Widget;
-                  })}
-                </box>
-              ) as Gtk.Widget,
-          );
-        })}
+        <With value={now}>
+          {(d) => {
+            const grid = monthGrid(d, starts);
+            const today = d.getDate();
+            return (
+              <box orientation={Gtk.Orientation.VERTICAL} spacing={2}>
+                {grid.map(
+                  (week) =>
+                    (
+                      <box orientation={Gtk.Orientation.HORIZONTAL} homogeneous>
+                        {week.map((day) => {
+                          const classes = ["calendar__cell"];
+                          if (day === today) classes.push("calendar__cell--today");
+                          if (day === null) classes.push("calendar__cell--blank");
+                          return (
+                            <label
+                              cssClasses={classes}
+                              label={day === null ? "" : String(day)}
+                              halign={Gtk.Align.CENTER}
+                            />
+                          ) as Gtk.Widget;
+                        })}
+                      </box>
+                    ) as Gtk.Widget,
+                )}
+              </box>
+            );
+          }}
+        </With>
       </box>
     );
 

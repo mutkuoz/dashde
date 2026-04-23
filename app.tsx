@@ -1,5 +1,6 @@
 import { Astal, Gdk, Gtk } from "ags/gtk4";
 import app from "ags/gtk4/app";
+import { With } from "ags";
 import GLib from "gi://GLib?version=2.0";
 import { bind } from "./lib/reactive";
 import { registerBuiltins } from "./widgets/index";
@@ -70,7 +71,7 @@ function WaylandDashboard(monitor: Gdk.Monitor): Gtk.Widget {
       visible
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
-        {bind(config).as((cfg) => renderLayout(cfg))}
+        <With value={config}>{(cfg) => renderLayout(cfg)}</With>
       </box>
     </window>
   );
@@ -87,7 +88,7 @@ function X11Dashboard(): Gtk.Widget {
       visible
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
-        {bind(config).as((cfg) => renderLayout(cfg))}
+        <With value={config}>{(cfg) => renderLayout(cfg)}</With>
       </box>
     </Gtk.Window>
   );
